@@ -1,0 +1,77 @@
+---------------------------------------------------------------------
+
+# Docker commands
+
+cd /home/ak/Documents/docker-example
+
+sudo docker build . -t amakundu/moe-php-mysql-demo:1.0.0
+
+# Specify a different post <host port>:<container port>
+sudo docker run -d -p 30001:80 --name "moe-php-mysql-app" --env AKTTS_HOST_URL="http://localhost:30001/" amakundu/moe-php-mysql-demo:1.0.0
+
+# Specify a different post <host port>:<container port> and a mount
+sudo docker run -d -it -p 30001:80 --name "moe-php-mysql-app" \
+  --env AKTTS_HOST_URL="http://localhost:30001/" -v "$(pwd)"/www:/var/www/html \
+  amakundu/moe-php-mysql-demo:1.0.0
+
+# Specify a different post <host port>:<container port> and a mount and log to FLUENTD
+sudo docker run -d -it -p 30001:80 --name "moe-php-mysql-app" \
+  --env AKTTS_HOST_URL="http://192.168.99.100:30001/" -v "$(pwd)"/www:/var/www/html \
+  --log-driver=fluentd --log-opt fluentd-address=192.168.99.100:24224 \
+  amakundu/moe-php-mysql-demo:1.0.0
+
+
+#Run MySQL independtly
+sudo docker run -d -it --name moe-mysql-app \
+--env MYSQL_ROOT_PASSWORD=rootpassword \
+--env MYSQL_USER=moeuser \
+--env MYSQL_PASSWORD=moepass \
+--env MYSQL_DATABASE=moe_db \
+mysql:5.7
+
+#Run MySQL-PHP-MYADMIN independtly
+sudo docker run -d -it --name moe-phpmyadmin-app -p 30002:80 \
+--env PMA_HOST=localhost \
+--env PMA_PORT=3306 \
+phpmyadmin/phpmyadmin:4.7
+
+
+
+#executing the bash command and attaching it to our terminal:
+sudo docker exec -it moe-php-mysql-app bash
+
+sudo docker-compose up --build
+
+
+sudo docker rm -f $(docker ps -aq)
+
+sudo docker inspect dc1403c05de2
+
+
+sudo docker login --username=amakundu
+
+sudo docker images -a
+
+sudo docker tag cf1a377ba77f amakundu/moe-php-mysql-demo:1.0.0
+
+sudo docker push amakundu/moe-php-mysql-demo:1.0.0
+
+---------------------------------------------------------------------
+
+# Kubernetes commands
+
+cd C:\Users\IBM_ADMIN\Documents\docker-demo\aktts-demo
+
+minikube start
+
+kubectl create -f kube-deployment.yml
+
+
+kubectl get deployments
+kubectl get services
+
+#Opening a shell when a Pod has one container
+kubectl exec -it moe-php-mysql-demo-deployment-5645878b6b-shr8t -- /bin/bash
+
+#Opening a shell when a Pod has more than one Container
+kubectl exec -it moe-php-mysql-demo-deployment-7db7d9d9dc-qvkvx --container moe-php-mysql-demo -- /bin/bash
