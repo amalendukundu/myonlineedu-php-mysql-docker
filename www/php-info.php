@@ -1,4 +1,4 @@
 <?php
-	echo 'Ak Hello from hello.php file - v1';
+	echo 'PHP-MySQL demo application for docker by MyOnlineEdu.com';
    phpinfo();
 ?>
